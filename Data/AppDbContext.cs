@@ -12,9 +12,9 @@ namespace Assignment2.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Book>().HasData(
-                    new Book { Id = 1, Title = "And Thene There Were None", Author = "Agatha Cristie", Price = 16.99M, IsAvailable = true },
-                    new Book { Id = 2, Title = "A Study in Scarlet", Author = "Arthur Conan Doyle", Price = 15.99M, IsAvailable = true },
-                    new Book { Id = 3, Title = "The Secret Garden", Author = "Gilbert Keith Chesterton", Price = 14.99M, IsAvailable = true }
+                    new Book { Id = 1, Title = "And Then There Were None", Author = "Agatha Cristie", Price = 16.99M, IsAvailable = true, Genre ="Mystery", PublishedYear = 1940 },
+                    new Book { Id = 2, Title = "A Study in Scarlet", Author = "Arthur Conan Doyle", Price = 15.99M, IsAvailable = true, Genre = "Detective Fiction", PublishedYear = 1887 },
+                    new Book { Id = 3, Title = "The Secret Garden", Author = "Gilbert Keith Chesterton", Price = 14.99M, IsAvailable = true, Genre = "Mystery", PublishedYear = 1910 }
                 );
             modelBuilder.Entity<User>().HasData(
                     new User { Id = 1, Username = "admin", Password = "admin", Role = "Admin" },

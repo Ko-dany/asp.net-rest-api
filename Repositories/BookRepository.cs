@@ -12,31 +12,65 @@ namespace Assignment2.Repositories
             _appDbContext = appDbContext;
         }
 
-        public IEnumerable<Book> GetAllBooks()
+        /* Version 1.0 */
+        public IEnumerable<BookDto> GetAllBookDto()
         {
-            return _appDbContext.Books.ToList();
+            IEnumerable<Book> books = _appDbContext.Books.ToList();
+            return books.Select(b => new BookDto
+            {
+                Id = b.Id,
+                Title = b.Title,
+                Author = b.Author,
+                Price = b.Price,
+                IsAvailable = b.IsAvailable
+            });
         }
-
-        public Book GetBookById(int id)
+        public BookDto GetBookDto(Book book)
         {
-            return _appDbContext.Books.Find(id);
+            return new BookDto
+            {
+                Id = book.Id,
+                Title = book.Title,
+                Author = book.Author,
+                Price = book.Price,
+                IsAvailable = book.IsAvailable
+            };
         }
-
-        public void AddBook(Book book)
+        public void AddBookDto(BookDto bookDto)
         {
-            _appDbContext.Add(book);
+            Book book = new Book
+            {
+                Id = bookDto.Id,
+                Title = bookDto.Title,
+                Author = bookDto.Author,
+                Price = bookDto.Price,
+                IsAvailable = bookDto.IsAvailable,
+                Genre = null,
+                PublishedYear = null,
+            };
+            AddBook(book);
         }
-
-        public void UpdateBook(Book existingBook, Book book)
+        public void UpdateBookDto(Book existingBook, BookDto book)
         {
             existingBook.Title = book.Title;
             existingBook.Author = book.Author;
             existingBook.Price = book.Price;
             existingBook.IsAvailable = book.IsAvailable;
         }
-        public void DeleteBook(Book existingBook)
+
+        /* Version 2.0 */
+        public IEnumerable<Book> GetAllBooks() { return _appDbContext.Books.ToList(); }
+        public Book GetBookById(int id) { return _appDbContext.Books.Find(id); }
+        public void AddBook(Book book) { _appDbContext.Add(book); }
+        public void UpdateBook(Book existingBook, Book book)
         {
-            _appDbContext.Remove(existingBook);
+            existingBook.Title = book.Title;
+            existingBook.Author = book.Author;
+            existingBook.Price = book.Price;
+            existingBook.IsAvailable = book.IsAvailable;
+            existingBook.Genre = book.Genre;
+            existingBook.PublishedYear = book.PublishedYear;
         }
+        public void DeleteBook(Book existingBook) { _appDbContext.Remove(existingBook); }
     }
 }
