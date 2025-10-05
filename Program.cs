@@ -1,4 +1,5 @@
 using Assignment2.Data;
+using Assignment2.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,8 +7,13 @@ var builder = WebApplication.CreateBuilder(args);
 /* Set up In-memory database */
 builder.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("Assignment2Db-DanyKo"));
 
-// Add services to the container.
+/* Register Respository pattern */
+builder.Services.AddScoped<IBookRepository, BookRepository>();
 
+/* Register Unit Of Work pattern */
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+// Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
