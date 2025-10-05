@@ -1,4 +1,5 @@
-﻿using Assignment2.Data;
+﻿using Asp.Versioning;
+using Assignment2.Data;
 using Assignment2.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,9 @@ using System.Security.Claims;
 
 namespace Assignment2.Controllers
 {
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
