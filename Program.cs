@@ -3,18 +3,19 @@ using Asp.Versioning.ApiExplorer;
 using Assignment2.Data;
 using Assignment2.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-/* Set up In-memory database */
+/* 1. Set up In-memory database */
 builder.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("Assignment2Db-DanyKo"));
 
-/* Register Respository, Unit Of Work pattern */
+/* 2. Register Respository, Unit Of Work pattern */
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-/* Register API versioning builder */
+/* 3. Register API versioning builder */
 var apiVersionBuilder = builder.Services.AddApiVersioning(options =>
 {
     options.AssumeDefaultVersionWhenUnspecified = true;
@@ -33,38 +34,77 @@ apiVersionBuilder.AddApiExplorer(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 
+/* 4. Add JWT authentication */
+builder.Services.AddAuthentication("Bearer").AddJwtBearer("Bearer", options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("i_am_doing_assignment_2_for_enterprise_class_hehe"))
+    };
+});
+
 // Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-/* Add swagger support options for API versioning */
 builder.Services.AddSwaggerGen(options =>
 {
+    /* 5. Add swagger support options for API versioning */
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
-        Title = "Product API v1",
-        Description = "A simple example ASP.NET Core Web API (v1)"
+        Title = "Assingment2 API v1",
+        Description = "Assignment2 REST API with API versiong and JWT tokens (v1)"
     });
     options.SwaggerDoc("v2", new OpenApiInfo
     {
         Version = "v2",
-        Title = "Product API v2",
-        Description = "A simple example ASP.NET Core Web API (v2)"
+        Title = "Assignment2 API v2",
+        Description = "Assignment2 REST API with API versiong and JWT tokens (v2)"
+    });
+
+    /* 6. Add swagger support options for JWT Authentication */
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
     });
 });
 
 var app = builder.Build();
 
-/* Ensure database is successfully created */
+/* 7. Ensure database is successfully created */
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     dbContext.Database.EnsureCreated();
 }
 
-/* Retrieve the service that provides information about all registered API versions */
+/* 8. Retrieve the service that provides information about all registered API versions */
 var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 
 // Configure the HTTP request pipeline.

@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using Assignment2.Models;
 using Assignment2.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Assignment2.Controllers
@@ -20,6 +21,7 @@ namespace Assignment2.Controllers
         }
 
         /* Version 1.0 */
+        [Authorize(Roles = "User, Admin")]
         [MapToApiVersion("1.0")]
         [HttpGet]
         public ActionResult<IEnumerable<Book>> GetAllBooksV1()
@@ -28,6 +30,7 @@ namespace Assignment2.Controllers
             return Ok(books);
         }
 
+        [Authorize(Roles = "User, Admin")]
         [MapToApiVersion("1.0")]
         [HttpGet("{id}")]
         public ActionResult<IEnumerable<Book>> GetBookByIdV1(int id)
@@ -39,6 +42,7 @@ namespace Assignment2.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [MapToApiVersion("1.0")]
         [HttpPost]
         public ActionResult AddBookV1(BookDto book)
@@ -50,6 +54,7 @@ namespace Assignment2.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "Admin")]
         [MapToApiVersion("1.0")]
         [HttpPut("{id}")]
         public ActionResult UpdateBookV1(int id, BookDto book)
@@ -64,6 +69,7 @@ namespace Assignment2.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "Admin")]
         [MapToApiVersion("1.0")]
         [HttpDelete("{id}")]
         public ActionResult DeleteBookV1(int id)
@@ -77,6 +83,7 @@ namespace Assignment2.Controllers
         }
 
         /* Version 2.0 */
+        [Authorize(Roles = "User, Admin")]
         [MapToApiVersion("2.0")]
         [HttpGet]
         public ActionResult<IEnumerable<Book>> GetAllBooksV2()
@@ -85,6 +92,7 @@ namespace Assignment2.Controllers
             return Ok(books);
         }
 
+        [Authorize(Roles = "User, Admin")]
         [MapToApiVersion("2.0")]
         [HttpGet("{id}")]
         public ActionResult<IEnumerable<Book>> GetBookByIdV2(int id)
@@ -94,6 +102,7 @@ namespace Assignment2.Controllers
             return Ok(book);
         }
 
+        [Authorize(Roles = "Admin")]
         [MapToApiVersion("2.0")]
         [HttpPost]
         public ActionResult AddBookV2(Book book)
@@ -104,6 +113,7 @@ namespace Assignment2.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "Admin")]
         [MapToApiVersion("2.0")]
         [HttpPut("{id}")]
         public ActionResult UpdateBookV2(int id, Book book)
@@ -118,6 +128,7 @@ namespace Assignment2.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "Admin")]
         [MapToApiVersion("2.0")]
         [HttpDelete("{id}")]
         public ActionResult DeleteBookV2(int id)
