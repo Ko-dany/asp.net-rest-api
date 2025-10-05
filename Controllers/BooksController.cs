@@ -1,10 +1,14 @@
-﻿using Assignment2.Models;
+﻿using Asp.Versioning;
+using Assignment2.Models;
 using Assignment2.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Assignment2.Controllers
 {
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [Route("api/[controller]")]
     [ApiController]
     public class BooksController : ControllerBase
@@ -16,24 +20,27 @@ namespace Assignment2.Controllers
             _context = context;
         }
 
-
+        /* Version 1.0 */
+        [MapToApiVersion("1.0")]
         [HttpGet]
-        public ActionResult<IEnumerable<Book>> GetAllBooks()
+        public ActionResult<IEnumerable<Book>> GetAllBooksV1()
         {
             var books = _context.Books.GetAllBooks();
             return Ok(books);
         }
 
+        [MapToApiVersion("1.0")]
         [HttpGet("{id}")]
-        public ActionResult<IEnumerable<Book>> GetBookById(int id)
+        public ActionResult<IEnumerable<Book>> GetBookByIdV1(int id)
         {
             var book = _context.Books.GetBookById(id);
             if (book == null) return NotFound();
             return Ok(book);
         }
 
+        [MapToApiVersion("1.0")]
         [HttpPost]
-        public ActionResult AddBook(Book book)
+        public ActionResult AddBookV1(Book book)
         {
             if (book == null) return BadRequest();
             _context.Books.AddBook(book);
@@ -41,8 +48,9 @@ namespace Assignment2.Controllers
             return Ok();
         }
 
+        [MapToApiVersion("1.0")]
         [HttpPut("{id}")]
-        public ActionResult UpdateBook(int id, Book book)
+        public ActionResult UpdateBookV1(int id, Book book)
         {
             var existingBook = _context.Books.GetBookById(book.Id);
             if (existingBook == null) return NotFound();
@@ -54,9 +62,62 @@ namespace Assignment2.Controllers
             return Ok();
         }
 
-        /* 6. Delete the employee by id */
+        [MapToApiVersion("1.0")]
         [HttpDelete("{id}")]
-        public ActionResult DeleteBook(int id)
+        public ActionResult DeleteBookV1(int id)
+        {
+            var existingBook = _context.Books.GetBookById(id);
+            if (existingBook == null) return NotFound();
+            _context.Books.DeleteBook(existingBook);
+            _context.Complete();
+            return Ok();
+        }
+
+        /* Version 2.0 */
+        [MapToApiVersion("2.0")]
+        [HttpGet]
+        public ActionResult<IEnumerable<Book>> GetAllBooksV2()
+        {
+            var books = _context.Books.GetAllBooks();
+            return Ok(books);
+        }
+
+        [MapToApiVersion("2.0")]
+        [HttpGet("{id}")]
+        public ActionResult<IEnumerable<Book>> GetBookByIdV2(int id)
+        {
+            var book = _context.Books.GetBookById(id);
+            if (book == null) return NotFound();
+            return Ok(book);
+        }
+
+        [MapToApiVersion("2.0")]
+        [HttpPost]
+        public ActionResult AddBookV2(Book book)
+        {
+            if (book == null) return BadRequest();
+            _context.Books.AddBook(book);
+            _context.Complete();
+            return Ok();
+        }
+
+        [MapToApiVersion("2.0")]
+        [HttpPut("{id}")]
+        public ActionResult UpdateBookV2(int id, Book book)
+        {
+            var existingBook = _context.Books.GetBookById(book.Id);
+            if (existingBook == null) return NotFound();
+
+            if (id != book.Id) return BadRequest("Id mismatch");
+
+            _context.Books.UpdateBook(existingBook, book);
+            _context.Complete();
+            return Ok();
+        }
+
+        [MapToApiVersion("2.0")]
+        [HttpDelete("{id}")]
+        public ActionResult DeleteBookV2(int id)
         {
             var existingBook = _context.Books.GetBookById(id);
             if (existingBook == null) return NotFound();
