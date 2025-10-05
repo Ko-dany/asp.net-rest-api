@@ -12,7 +12,7 @@ namespace Assignment2.Controllers
     [ApiController]
     public class BooksV1Controller : ControllerBase
     {
-        IUnitOfWork _context;
+        private readonly IUnitOfWork _context;
 
         public BooksV1Controller(IUnitOfWork context)
         {

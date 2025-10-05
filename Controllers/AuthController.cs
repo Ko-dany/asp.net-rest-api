@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using Assignment2.Data;
 using Assignment2.Models;
+using Assignment2.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -16,9 +17,9 @@ namespace Assignment2.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly AppDbContext _context;
-        
-        public AuthController(AppDbContext context)
+        private readonly IUnitOfWork _context;
+
+        public AuthController(IUnitOfWork context)
         {
             _context = context;
         }
@@ -27,7 +28,7 @@ namespace Assignment2.Controllers
         public ActionResult Login([FromBody] LoginRequest request)
         {
             /* Search the Users table using the given lamda and return the first matching record */
-            var user = _context.Users.FirstOrDefault(u => u.Username == request.Username && u.Password == request.Password);
+            var user = _context.Users.GetUserDB().FirstOrDefault(u => u.Username == request.Username && u.Password == request.Password);
             if(user == null)
             {
                 return Unauthorized("Invalid username or password.");
